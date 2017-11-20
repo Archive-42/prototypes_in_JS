@@ -51,7 +51,47 @@ So now, hopefully, you can fully understand code that looks like
 
 For whatever reason we might have, we decided to put the `meow` function in the prototype of the constructor rather than stamping it as a value onto a new object. Methods are customarily added to the constructor's prototype, but it won't break the system to add `this.meow = function...` to the constructor's code block. In production, some methods could be hundreds of lines long, so this custom makes some sense.
 
-## Making sense of `Array.prototype.slice.call(arguments);`
+## Making sense of `Array.prototype.slice.call(arguments)`
+
+So what does this do? It has a lot of elements, and at first glance its purpose is not clear. Let's look closely at each piece of it.
+
+**slice()**
+> The slice() method returns a shallow copy of a portion of an array into a new array object selected from `begin` to `end` (`end` not included). The original array will not be modified... If `begin` is undefined, slice begins from index 0... If `end` is omitted, slice extracts through the end of the sequence (`arr.length`). [[MDN Documentation]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice)
+
+So `a.slice()` will just return an array copy of the array `a`. We're not specifying a start or end index for the slicing, so it'll give us the whole kebab.
+
+**arguments**
+> The arguments object is an Array-like object corresponding to the arguments passed to a function. [[MDN Documentation]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments)
+
+So if we have some code like this
+
+    function testMeow(age, breed) {
+        console.log(`Your cat is ${age} years old and is a ${breed}`);
+        console.log(arguments);       // { 0: '10', 1: 'Maine Coon' }
+    }
+    testMeow("10", "Maine Coon");
+
+`arguments` is going to be `{ 0: '10', 1: 'Maine Coon' }`. It's an indexed object with a `length` property. Notice how its keys are numeric and correspond to the order of arguments as they were passed into `testMeow`. `arguments[0]` is a valid expression here.
+
+**call**
+>The call() method calls a function with a given `this` value and arguments provided individually. [[MDN Documentation]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call)
+
+It takes the form `function.call(thisArg, arg1, arg2, ...)`, where `thisArg` refers to the `this` value and the subsequent arguments are actually arguments for the main function (`function` here). Take a look at this non-bewildering example from MDN
+
+    function greet() {
+        var reply = [this.person, 'Is An Awesome', this.role].join(' ');
+        console.log(reply);
+    }
+    var i = {
+    person: 'Douglas Crockford', role: 'Javascript Developer'
+    };
+    greet.call(i); // Douglas Crockford Is An Awesome Javascript Developer
+
+As you can see, `call` sets the value of `this` in `greet()` to `i`.
+
+So let's put all of this together for `Array.prototype.slice.call(arguments)`. `Arguments` is an indexed object; it doesn't have access to `Array.prototype` by default. It has access to `Object.prototype` instead. The problem is that `Object.prototype` has no methods for making arrays out of stuff.  So we have to change the `this` of a method in `Array.prototype` to `arguments`. We do that using `call`. Since we want a new array, we can take advantage of the array-producing functionality of `slice()` on the indexes in `arguments`. So... to put it all together... we're taking an indexed object and turning it into an array. This way, we can use all the nifty array methods on it, if need be.
+
+Hope that helps!
 
 ## References
 
