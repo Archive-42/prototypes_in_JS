@@ -55,8 +55,8 @@ For whatever reason we might have, we decided to put the `meow` function in the 
 
 ## References
 
-* [Beej's article on JS prototypes](http://beej.us/blog/data/javascript-prototypes-inheritance/)
-* [Beej's blog post on Array.prototype.slice.call(arguments)](https://github.com/LambdaSchool/BeejWiki/wiki/Arrays,-prototypes,-slices,-calls)
+* [Beej's blog post on JS prototypes](http://beej.us/blog/data/javascript-prototypes-inheritance/)
+* [Beej's internal wiki article on Array.prototype.slice.call(arguments)](https://github.com/LambdaSchool/BeejWiki/wiki/Arrays,-prototypes,-slices,-calls)
 * [YouTube: Prototypes in Javascript - p5.js Tutorial](https://www.youtube.com/watch?v=hS_WqkyUah8)
 * [YouTube: proto vs prototype - Object Creation in JavaScript P5](https://www.youtube.com/watch?v=DqGwxR_0d1M)
 * [Constructors in JS](http://adripofjavascript.com/blog/drips/constructors-in-javascript.html)
